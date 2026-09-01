@@ -13,7 +13,7 @@ def main():
 
 
     try:
-        top_artists_data = get_top_artists(username)
+        top_artists_data = lastfm_get(username, method="user.getTopArtists", limit=15)
     except HTTPError as e:
         print(f"Error: {e}")
         return
@@ -21,37 +21,52 @@ def main():
     artists = top_artists_data["topartists"]["artist"]
     artist_plays = {artist["name"]: int(artist["playcount"]) for artist in artists} 
 
-
     for artist, plays in artist_plays.items():
         print(f"{artist}: {plays} plays")
 
 
-###############################################################################
 
 
     try:
-        data_top_tracks = get_top_tracks(username)
+        data_top_tracks = lastfm_get(username, method="user.getTopTracks", limit=15)
     except HTTPError as e:
         print(f"Error: {e}")
         return
     
-    top_tracks = data_top_tracks["toptracks"]["track"]
-    top_tracks_plays = {track["name"]: int(track["playcount"]) for track in top_tracks}
+    tracks = data_top_tracks["toptracks"]["track"]
+    track_plays = {track["name"]: int(track["playcount"]) for track in tracks}
 
-    for track, plays in top_tracks_plays.items():
+    for track, plays in track_plays.items():
             print(f"{track}: {plays} plays")
-    
+
+
+
+
+    try:
+        top_tags_data = lastfm_get(username, method="user.getTopTags", limit=15)
+    except HTTPError as e:
+        print(f"Error: {e}")
+        return
+
+    tags = top_tags_data["toptags"]["tag"]
+
+    for tag in tags:
+        print(f"{tag['name']}")
+
+
 
     print("\nData provided by Last.fm")
     print("https://www.last.fm/\n")
-    
-def get_top_artists(username):
+
+
+
+def lastfm_get(username, method, limit: int = 10):
     params = {
-        "method": "user.getTopArtists",
+        "method": method,
         "user": username,
         "api_key": api_key,
         "format": "json",
-        "limit": 10
+        "limit": limit 
     } 
 
     response = requests.get(url=url, params=params, timeout=10)
@@ -59,21 +74,10 @@ def get_top_artists(username):
     response.raise_for_status()
 
     return response.json()
-    
-def get_top_tracks(username):
-    params = {
-            "method": "user.getTopTracks",
-            "user": username,
-            "api_key": api_key,
-            "format": "json",
-            "limit": 10
-        } 
-    
-    response = requests.get(url=url, params=params, timeout=10)
-    
-    response.raise_for_status()
-    
-    return response.json()
+
+
+
+
 
 if __name__ == "__main__":
     main()
