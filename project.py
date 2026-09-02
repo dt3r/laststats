@@ -5,15 +5,33 @@ from dotenv import load_dotenv
 
 load_dotenv() 
 
-api_key = os.getenv("LASTFM_API_KEY")
-url = "https://ws.audioscrobbler.com/2.0/"
+API_KEY = os.getenv("LASTFM_API_KEY")
+URL = "https://ws.audioscrobbler.com/2.0/"
+
+class LastFmUser:
+    def __init__(self, username):
+        self.username = username
+
+    def get_data(self, method: str, limit: int = 10):
+        params = {
+            "method": method,
+            "user": self.username,
+            "api_key": API_KEY,
+            "format": "json",
+            "limit": limit
+        } 
+        response = requests.get(url=URL, params=params, timeout=10)
+        
+        response.raise_for_status()
+        
+        return response.json()
 
 def main():
     username = input("Enter Last.fm username: ")
-
+    user = LastFmUser(username)
 
     try:
-        top_artists_data = lastfm_get(username, method="user.getTopArtists", limit=15)
+        top_artists_data = user.get_data(method="user.getTopArtists", limit=15)
     except HTTPError as e:
         print(f"Error: {e}")
         return
@@ -28,7 +46,7 @@ def main():
 
 
     try:
-        data_top_tracks = lastfm_get(username, method="user.getTopTracks", limit=15)
+        data_top_tracks = user.get_data(method="user.getTopTracks", limit=15)
     except HTTPError as e:
         print(f"Error: {e}")
         return
@@ -41,40 +59,8 @@ def main():
 
 
 
-
-    try:
-        top_tags_data = lastfm_get(username, method="user.getTopTags", limit=15)
-    except HTTPError as e:
-        print(f"Error: {e}")
-        return
-
-    tags = top_tags_data["toptags"]["tag"]
-
-    for tag in tags:
-        print(f"{tag['name']}")
-
-
-
     print("\nData provided by Last.fm")
     print("https://www.last.fm/\n")
-
-
-
-def lastfm_get(username, method, limit: int = 10):
-    params = {
-        "method": method,
-        "user": username,
-        "api_key": api_key,
-        "format": "json",
-        "limit": limit 
-    } 
-
-    response = requests.get(url=url, params=params, timeout=10)
-
-    response.raise_for_status()
-
-    return response.json()
-
 
 
 
