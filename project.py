@@ -51,7 +51,7 @@ def main():
 
     top_artists_data = user.get_data(method="user.getTopArtists", limit=15)
 
-    # Creates two dictionaries because we may need to work with playcount in the future.
+    # Creates two dictionaries (artist_plays and track_plays) because we may need to work with playcount in the future.
     # I converted the playcounts of both dictionaries to int because API returns playcount as str.
 
     artists = top_artists_data["topartists"]["artist"]
@@ -70,13 +70,32 @@ def main():
     for track, plays in track_plays.items():
             print(f"{track}: {plays} plays")
 
-
+    print(f"\n{top_artists_calculations(artist_plays)}")
 
     print("\nData provided by Last.fm")
     print("https://www.last.fm/\n")
 
-def total_playcount():
-    ...
+def top_artists_calculations(dictionary):
+    """
+    Calculates favourite artist playcount to total playcount ratio.
+    Returns a personalized message string based on those calculations.
+    """
+
+    total_playcount = sum(dictionary.values())
+    favourite_artist = next(iter(dictionary.items()))
+    favourite_artist_percent = round(favourite_artist[1] / total_playcount * 100)
+    
+    if favourite_artist_percent == 100:
+        return f"You're obsessed with {favourite_artist[0]}, you only listen to their tracks! {favourite_artist[1]} plays"
+    elif 100 > favourite_artist_percent >= 50:
+        return f"{favourite_artist[0]} dominates your listening, you listen to them {favourite_artist_percent}% of time! {favourite_artist[1]} plays"
+    elif 50 > favourite_artist_percent >= 25:
+        return f"{favourite_artist[0]} is your clear favourite, {favourite_artist_percent}% from your total playcount! {favourite_artist[1]} plays"
+    else:
+        return f"Your music taste is diverse! {favourite_artist[0]} is your #1 artist and they only take {favourite_artist_percent}% from your total playcount. {favourite_artist[1]} plays"
+
+
+
 
 
 
