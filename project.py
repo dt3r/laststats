@@ -70,7 +70,8 @@ def main():
     for track, plays in track_plays.items():
             print(f"{track}: {plays} plays")
 
-    print(f"\n{top_artists_calculations(artist_plays)}")
+
+    print(f"\n{top_artists_calculations(artist_plays)} \n{playcount_gap(artist_plays)}")
 
     print("\nData provided by Last.fm")
     print("https://www.last.fm/\n")
@@ -78,22 +79,48 @@ def main():
 def top_artists_calculations(dictionary):
     """
     Calculates favourite artist playcount to total playcount ratio.
-    Returns a personalized message string based on those calculations.
+    Returns a message string based on those calculations.
     """
+    dictionary_iterator = iter(dictionary.items())
 
     total_playcount = sum(dictionary.values())
-    favourite_artist = next(iter(dictionary.items()))
-    favourite_artist_percent = round(favourite_artist[1] / total_playcount * 100)
-    
-    if favourite_artist_percent == 100:
-        return f"You're obsessed with {favourite_artist[0]}, you only listen to their tracks! {favourite_artist[1]} plays"
-    elif 100 > favourite_artist_percent >= 50:
-        return f"{favourite_artist[0]} dominates your listening, you listen to them {favourite_artist_percent}% of time! {favourite_artist[1]} plays"
-    elif 50 > favourite_artist_percent >= 25:
-        return f"{favourite_artist[0]} is your clear favourite, {favourite_artist_percent}% from your total playcount! {favourite_artist[1]} plays"
-    else:
-        return f"Your music taste is diverse! {favourite_artist[0]} is your #1 artist and they only take {favourite_artist_percent}% from your total playcount. {favourite_artist[1]} plays"
 
+    top_1_artist = next(dictionary_iterator)
+
+    top_1_artist_percent = round(top_1_artist[1] / total_playcount * 100)
+
+    
+    if top_1_artist_percent == 100:
+        return f"You're obsessed with {top_1_artist[0]}, you only listen to their tracks! {top_1_artist[1]} plays"
+    elif 100 > top_1_artist_percent >= 50:
+        return f"{top_1_artist[0]} dominates your listening, you listen to them {top_1_artist_percent}% of time! {top_1_artist[1]} plays"
+    elif 50 > top_1_artist_percent >= 25:
+        return f"{top_1_artist[0]} is your clear favourite, {top_1_artist_percent}% from your total playcount! {top_1_artist[1]} plays"
+    elif 25 > top_1_artist_percent > 0:
+        return f"Your music taste is diverse! {top_1_artist[0]} is your #1 artist and they only take {top_1_artist_percent}% from your total playcount. {top_1_artist[1]} plays"
+    
+
+        
+def playcount_gap(dictionary):
+    """
+    Calculates gap between the playcount of artist #1 and artist #2
+    Returns a message string based on those calculations
+    """
+    dictionary_iterator = iter(dictionary.items())
+
+    top_1_artist = next(dictionary_iterator)
+    top_2_artist = next(dictionary_iterator)
+
+    playcount_gap = top_1_artist[1] - top_2_artist[1]
+
+    if 0 < playcount_gap <= 10:
+        return f"{top_2_artist[0]} is only {playcount_gap} plays away from {top_1_artist[0]}, your taste is concentrated!"
+    elif 10 < playcount_gap <= 100:
+        return f"{top_2_artist[0]} is really close to {top_1_artist[0]}, the gap is {playcount_gap} plays!"
+    elif 100 < playcount_gap <= 450:
+        return f"{top_2_artist[0]} is {playcount_gap} plays away from {top_1_artist[0]}!"
+    elif playcount_gap > 450:
+        return f"{top_2_artist[0]} can't compete with your favourite artist, they are {playcount_gap} plays away from {top_1_artist[0]}!"
 
 
 
