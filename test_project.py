@@ -2,7 +2,7 @@ import pytest
 import requests
 from requests.exceptions import HTTPError
 from unittest.mock import Mock, patch
-from project import LastFmUser, top_artists_calculations, playcount_gap
+from project import LastFmUser, top_artists_calculations, playcount_gap, top_song_calculations
 
 
 @patch("project.requests.get")
@@ -12,9 +12,9 @@ def test_api(mock_get):
 
     response_dict = {"topartists": {
         "artist": [
-            {"name": "Metallica", "playcount": "150"},
-            {"name": "Nirvana", "playcount": "90"},
-            {"name": "Weezer", "playcount": "50"}
+            {"name": "test_band_1", "playcount": "150"},
+            {"name": "test_band_2", "playcount": "90"},
+            {"name": "test_band_3", "playcount": "50"}
             ]
             }
             }
@@ -70,75 +70,96 @@ def test_request_exception(mock_get):
     assert result is None
 
 def test_top_artists_calculations():
-    test_dictionary = {"Metallica": 50,
-                   "Nirvana": 25,
-                     "Weezer": 25
+    test_dictionary = {"test_band_1": 50,
+                   "test_band_2": 25,
+                     "test_band_3": 25
                      }
     
-    test_dictionary_2 = {"Metallica": 100,
+    test_dictionary_2 = {"test_band_1": 100,
                      }
     
-    test_dictionary_3 = {"Metallica": 30,
-                   "Nirvana": 20,
-                     "Weezer": 20,
-                     "Pink Floyd": 20,
-                     "AC/DC": 10 
+    test_dictionary_3 = {"test_band_1": 30,
+                   "test_band_2": 20,
+                     "test_band_3": 20,
+                     "test_band_4": 20,
+                     "test_band_5": 10 
                      }
     
-    test_dictionary_4 = {"Metallica": 25,
-                   "Nirvana": 21,
-                     "Weezer": 20,
-                     "Pink Floyd": 20,
-                     "AC/DC": 20 
+    test_dictionary_4 = {"test_band_1": 25,
+                   "test_band_2": 21,
+                     "test_band_3": 20,
+                     "test_band_4": 20,
+                     "test_band_5": 20 
                      }
 
     
-    assert top_artists_calculations(test_dictionary) == "Metallica dominates your listening, you listen to them 50% of time! 50 plays"
-    assert top_artists_calculations(test_dictionary_2) == "You're obsessed with Metallica, you only listen to their tracks! 100 plays"
-    assert top_artists_calculations(test_dictionary_3) == "Metallica is your clear favourite, 30% from your total playcount! 30 plays"
-    assert top_artists_calculations(test_dictionary_4) == "Your music taste is diverse! Metallica is your #1 artist and they only take 24% from your total playcount. 25 plays"
+    assert top_artists_calculations(test_dictionary) == "test_band_1 dominates your listening, you listen to them 50% of time! 50 plays"
+    assert top_artists_calculations(test_dictionary_2) == "You're obsessed with test_band_1, you only listen to their tracks! 100 plays"
+    assert top_artists_calculations(test_dictionary_3) == "test_band_1 is your clear favourite, 30% from your total playcount! 30 plays"
+    assert top_artists_calculations(test_dictionary_4) == "Your music taste is diverse! test_band_1 is your #1 artist and they only take 24% from your total playcount. 25 plays"
 
 def test_playcount_gap():
-    test_dictionary = {"Metallica": 50,
-                       "Nirvana": 40,                        
+    test_dictionary = {"test_band_1": 50,
+                       "test_band_2": 40,                        
                          }
 
-    test_dictionary_2 = {"Metallica": 50,
-                       "Nirvana": 41,                        
+    test_dictionary_2 = {"test_band_1": 50,
+                       "test_band_2": 41,                        
                          }
 
-    test_dictionary_3 = {"Metallica": 50,
-                           "Nirvana": 20,                        
+    test_dictionary_3 = {"test_band_1": 50,
+                           "test_band_2": 20,                        
                              }
     
-    test_dictionary_4 = {"Metallica": 200,
-                            "Nirvana": 100,                        
+    test_dictionary_4 = {"test_band_1": 200,
+                            "test_band_2": 100,                        
                               }
     
-    test_dictionary_5 = {"Metallica": 200,
-                            "Nirvana": 20,                        
+    test_dictionary_5 = {"test_band_1": 200,
+                            "test_band_2": 20,                        
                               }
     
-    test_dictionary_6 = {"Metallica": 550,
-                            "Nirvana": 100,                        
+    test_dictionary_6 = {"test_band_1": 550,
+                            "test_band_2": 100,                        
                               }
     
-    test_dictionary_7 = {"Metallica": 1000,
-                            "Nirvana": 200,                        
+    test_dictionary_7 = {"test_band_1": 1000,
+                            "test_band_2": 200,                        
                               }
     
 
-    test_dictionary_8 = {"Metallica": 50,
-                       "Nirvana": 50,                        
+    test_dictionary_8 = {"test_band_1": 50,
+                       "test_band_2": 50,                        
                          }
 
-    assert playcount_gap(test_dictionary) == "Nirvana is only 10 plays away from Metallica, your taste is concentrated!"
-    assert playcount_gap(test_dictionary_2) == "Nirvana is only 9 plays away from Metallica, your taste is concentrated!"
+    assert playcount_gap(test_dictionary) == "test_band_2 is only 10 plays away from test_band_1, your taste is concentrated!"
+    assert playcount_gap(test_dictionary_2) == "test_band_2 is only 9 plays away from test_band_1, your taste is concentrated!"
 
-    assert playcount_gap(test_dictionary_3) == "Nirvana is really close to Metallica, the gap is 30 plays!"
-    assert playcount_gap(test_dictionary_4) == "Nirvana is really close to Metallica, the gap is 100 plays!"
+    assert playcount_gap(test_dictionary_3) == "test_band_2 is really close to test_band_1, the gap is 30 plays!"
+    assert playcount_gap(test_dictionary_4) == "test_band_2 is really close to test_band_1, the gap is 100 plays!"
 
-    assert playcount_gap(test_dictionary_5) == "Nirvana is 180 plays away from Metallica!"
-    assert playcount_gap(test_dictionary_6) == "Nirvana is 450 plays away from Metallica!"
-    assert playcount_gap(test_dictionary_7) == "Nirvana can't compete with your favourite artist, they are 800 plays away from Metallica!"
+    assert playcount_gap(test_dictionary_5) == "test_band_2 is 180 plays away from test_band_1!"
+    assert playcount_gap(test_dictionary_6) == "test_band_2 is 450 plays away from test_band_1!"
+    assert playcount_gap(test_dictionary_7) == "test_band_2 can't compete with your favourite artist, they are 800 plays away from test_band_1!"
     assert playcount_gap(test_dictionary_8) is None
+
+def test_top_song_calculations():
+  test_dictionary = {"test_song_1": 30,
+                     "test_song_2": 20,                   
+                       }
+
+  test_dictionary_2 = {"test_song_1": 21123,
+                     "test_song_2": 8323,                   
+                       }
+
+  test_dictionary_3 = {"test_song_1": 21123,
+                       "test_song_2": 8323,    
+                       "test_song_3": 2414,
+                       "test_song_4": 1390,
+                       "test_song_5": 444               
+                         }
+  
+  assert top_song_calculations(test_dictionary) == "Your favourite song is test_song_1, it stands for 60% plays from your total playcount!"
+  assert top_song_calculations(test_dictionary_2) == "Your favourite song is test_song_1, it stands for 72% plays from your total playcount!"
+  assert top_song_calculations(test_dictionary_3) == "Your favourite song is test_song_1, it stands for 63% plays from your total playcount!"
+  ...
