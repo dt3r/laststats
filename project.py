@@ -73,19 +73,21 @@ def main():
 
     print(f"\n{top_artists_calculations(artist_plays)} \n{playcount_gap(artist_plays)}")
 
+    print(top_song_calculations(track_plays))
+
     print("\nData provided by Last.fm")
     print("https://www.last.fm/\n")
 
 def top_artists_calculations(dictionary):
     """
-    Calculates favourite artist playcount to total playcount ratio.
+    Calculates favourite artist playcount to total artists playcount ratio.
     Returns a message string based on those calculations.
     """
-    dictionary_iterator = iter(dictionary.items())
+    iterator = iter(dictionary.items())
 
     total_playcount = sum(dictionary.values())
 
-    top_1_artist = next(dictionary_iterator)
+    top_1_artist = next(iterator)
 
     top_1_artist_percent = round(top_1_artist[1] / total_playcount * 100)
 
@@ -98,10 +100,23 @@ def top_artists_calculations(dictionary):
         return f"{top_1_artist[0]} is your clear favourite, {top_1_artist_percent}% from your total playcount! {top_1_artist[1]} plays"
     elif 25 > top_1_artist_percent > 0:
         return f"Your music taste is diverse! {top_1_artist[0]} is your #1 artist and they only take {top_1_artist_percent}% from your total playcount. {top_1_artist[1]} plays"
-    
 
+def top_song_calculations(dictionary):
+    """
+    Calculates favourite song playcount to total songs playcount ratio.
+    Returns a message string based on those calculations.
+    """
+    iterator = iter(dictionary.items())
+
+    total_playcount = sum(dictionary.values())
+    top_1_song = next(iterator)
+
+    top_1_song_percent = round(top_1_song[1] / total_playcount * 100)
+
+    return f"Your favourite song is {top_1_song[0]}, it stands for {top_1_song_percent}% plays from your total playcount!"
+    
         
-def playcount_gap(dictionary):
+def playcount_gap(dictionary,):
     """
     Calculates gap between the playcount of artist #1 and artist #2
     Returns a message string based on those calculations
@@ -121,6 +136,8 @@ def playcount_gap(dictionary):
         return f"{top_2_artist[0]} is {playcount_gap} plays away from {top_1_artist[0]}!"
     elif playcount_gap > 450:
         return f"{top_2_artist[0]} can't compete with your favourite artist, they are {playcount_gap} plays away from {top_1_artist[0]}!"
+
+
 
 
 
