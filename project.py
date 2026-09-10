@@ -23,7 +23,7 @@ class LastFmUser:
             "limit": limit
         }
 
-        # Timeout is needed so the program doesn't hang indefinitely.
+        # Prevent the program from hanging indefinitely if the server didn't respond.
         try:
             response = requests.get(url=URL, params=params, timeout=10)
             
@@ -46,38 +46,64 @@ class LastFmUser:
 
         
 def main():
+    def playcount_message(dictionary):
+        print()
+        for name, plays in dictionary.items():
+            print(f"{name}: {plays} plays")
+
+    print("\n=======LASTSTATS=======\n")
     username = input("Enter Last.fm username: ")
     user = LastFmUser(username)
 
-    top_artists_data = user.get_data(method="user.getTopArtists", limit=15)
+    while True:
+        try:
+            limit = int(input("Enter the limit of songs and/or artists: "))
+            break
+        except ValueError:
+            print("Please enter a valid limit.")
 
-    # Creates two dictionaries (artist_plays and track_plays) because we may need to work with playcount in the future.
-    # I converted the playcounts of both dictionaries to int because API returns playcount as str.
+    top_artists_data = user.get_data(method="user.getTopArtists", limit=limit)
+    data_top_tracks = user.get_data(method="user.getTopTracks", limit=limit)
+
+    # Convert API playcounts in from str to int for calculations
 
     artists = top_artists_data["topartists"]["artist"]
     artist_plays = {artist["name"]: int(artist["playcount"]) for artist in artists} 
 
-    for artist, plays in artist_plays.items():
-        print(f"{artist}: {plays} plays")
-
-
-    
-    data_top_tracks = user.get_data(method="user.getTopTracks", limit=15)
-    
     tracks = data_top_tracks["toptracks"]["track"]
     track_plays = {track["name"]: int(track["playcount"]) for track in tracks}
 
-    for track, plays in track_plays.items():
-            print(f"{track}: {plays} plays")
+   
+    while True:
+        print("\n1. View top artists")
+        print("2. View top songs")
+        print("3. View formatted stats")
+        print("4. Exit")
+        while True:
+            try:
+                choice = int(input("Enter your choice: "))
+                break
+            except ValueError:
+                print("Input a valid choice from 1 to 4")
 
+        match choice:
+            case 1:
+                playcount_message(artist_plays)
+            case 2:
+                playcount_message(track_plays)
+            case 3:
+                print("\nTop artist:")
+                print(top_artists_calculations(artist_plays))
+                print(playcount_gap(artist_plays))
 
-    print(f"\n{top_artists_calculations(artist_plays)} \n{playcount_gap(artist_plays)}")
-
-    print(top_song_calculations(track_plays))
+                print("\nTop song:")
+                print(top_song_calculations(track_plays))               
+            case 4:
+                break         
 
     print("\nData provided by Last.fm")
     print("https://www.last.fm/\n")
-
+    print("=======================")
 def top_artists_calculations(dictionary):
     """
     Calculates favourite artist playcount to total artists playcount ratio.
@@ -87,6 +113,7 @@ def top_artists_calculations(dictionary):
 
     total_playcount = sum(dictionary.values())
 
+    # Last.fm returns artists ordered by playcount, so top 1 artist is the first item
     top_1_artist = next(iterator)
 
     top_1_artist_percent = round(top_1_artist[1] / total_playcount * 100)
@@ -98,7 +125,7 @@ def top_artists_calculations(dictionary):
         return f"{top_1_artist[0]} dominates your listening, you listen to them {top_1_artist_percent}% of time! {top_1_artist[1]} plays"
     elif 50 > top_1_artist_percent >= 25:
         return f"{top_1_artist[0]} is your clear favourite, {top_1_artist_percent}% from your total playcount! {top_1_artist[1]} plays"
-    elif 25 > top_1_artist_percent > 0:
+    elif 25 > top_1_artist_percent >= 0:
         return f"Your music taste is diverse! {top_1_artist[0]} is your #1 artist and they only take {top_1_artist_percent}% from your total playcount. {top_1_artist[1]} plays"
 
 def top_song_calculations(dictionary):
@@ -113,10 +140,10 @@ def top_song_calculations(dictionary):
 
     top_1_song_percent = round(top_1_song[1] / total_playcount * 100)
 
-    return f"Your favourite song is {top_1_song[0]}, it stands for {top_1_song_percent}% plays from your total playcount!"
+    return f"Your favourite song is {top_1_song[0]} ({top_1_song[1]} plays), it stands for {top_1_song_percent}% plays from all your songs!"
     
         
-def playcount_gap(dictionary,):
+def playcount_gap(dictionary):
     """
     Calculates gap between the playcount of artist #1 and artist #2
     Returns a message string based on those calculations
@@ -136,6 +163,7 @@ def playcount_gap(dictionary,):
         return f"{top_2_artist[0]} is {playcount_gap} plays away from {top_1_artist[0]}!"
     elif playcount_gap > 450:
         return f"{top_2_artist[0]} can't compete with your favourite artist, they are {playcount_gap} plays away from {top_1_artist[0]}!"
+
 
 
 

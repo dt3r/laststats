@@ -159,7 +159,7 @@ def test_top_song_calculations():
                        "test_song_5": 444               
                          }
   
-  assert top_song_calculations(test_dictionary) == "Your favourite song is test_song_1, it stands for 60% plays from your total playcount!"
-  assert top_song_calculations(test_dictionary_2) == "Your favourite song is test_song_1, it stands for 72% plays from your total playcount!"
-  assert top_song_calculations(test_dictionary_3) == "Your favourite song is test_song_1, it stands for 63% plays from your total playcount!"
-  ...
+  assert top_song_calculations(test_dictionary) == "Your favourite song is test_song_1 (30 plays), it stands for 60% plays from all your songs!"
+  assert top_song_calculations(test_dictionary_2) == "Your favourite song is test_song_1 (21123 plays), it stands for 72% plays from all your songs!"
+  assert top_song_calculations(test_dictionary_3) == "Your favourite song is test_song_1 (21123 plays), it stands for 63% plays from all your songs!"
+  
