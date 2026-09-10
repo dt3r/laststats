@@ -92,11 +92,13 @@ def test_top_artists_calculations():
                      "test_band_5": 20 
                      }
 
+    test_dictionary_5 = {}
     
     assert top_artists_calculations(test_dictionary) == "test_band_1 dominates your listening, you listen to them 50% of time! 50 plays"
     assert top_artists_calculations(test_dictionary_2) == "You're obsessed with test_band_1, you only listen to their tracks! 100 plays"
     assert top_artists_calculations(test_dictionary_3) == "test_band_1 is your clear favourite, 30% from your total playcount! 30 plays"
     assert top_artists_calculations(test_dictionary_4) == "Your music taste is diverse! test_band_1 is your #1 artist and they only take 24% from your total playcount. 25 plays"
+    assert top_artists_calculations(test_dictionary_5) == "Not enough data to calculate top artist stats."
 
 def test_playcount_gap():
     test_dictionary = {"test_band_1": 50,
@@ -132,6 +134,8 @@ def test_playcount_gap():
                        "test_band_2": 50,                        
                          }
 
+    test_dictionary_9 = {}
+
     assert playcount_gap(test_dictionary) == "test_band_2 is only 10 plays away from test_band_1, your taste is concentrated!"
     assert playcount_gap(test_dictionary_2) == "test_band_2 is only 9 plays away from test_band_1, your taste is concentrated!"
 
@@ -141,7 +145,9 @@ def test_playcount_gap():
     assert playcount_gap(test_dictionary_5) == "test_band_2 is 180 plays away from test_band_1!"
     assert playcount_gap(test_dictionary_6) == "test_band_2 is 450 plays away from test_band_1!"
     assert playcount_gap(test_dictionary_7) == "test_band_2 can't compete with your favourite artist, they are 800 plays away from test_band_1!"
-    assert playcount_gap(test_dictionary_8) is None
+
+    assert playcount_gap(test_dictionary_8) == "test_band_2 shares first place with test_band_1"
+    assert playcount_gap(test_dictionary_9) == "Not enough data to calculate playcount gap."
 
 def test_top_song_calculations():
   test_dictionary = {"test_song_1": 30,
@@ -158,8 +164,11 @@ def test_top_song_calculations():
                        "test_song_4": 1390,
                        "test_song_5": 444               
                          }
+
+  test_dictionary_4 = {}
   
   assert top_song_calculations(test_dictionary) == "Your favourite song is test_song_1 (30 plays), it stands for 60% plays from all your songs!"
   assert top_song_calculations(test_dictionary_2) == "Your favourite song is test_song_1 (21123 plays), it stands for 72% plays from all your songs!"
   assert top_song_calculations(test_dictionary_3) == "Your favourite song is test_song_1 (21123 plays), it stands for 63% plays from all your songs!"
+  assert top_song_calculations(test_dictionary_4) == "Not enough data to calculate top song stats."
   
