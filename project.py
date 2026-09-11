@@ -65,7 +65,7 @@ def main():
     top_artists_data = user.get_data(method="user.getTopArtists", limit=limit)
     data_top_tracks = user.get_data(method="user.getTopTracks", limit=limit)
 
-    # Convert API playcounts in from str to int for calculations
+    # Convert API playcounts from str to int for calculations
     if top_artists_data and data_top_tracks:
         artists = top_artists_data["topartists"]["artist"]
         artist_plays = {artist["name"]: int(artist["playcount"]) for artist in artists} 
